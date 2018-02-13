@@ -1,68 +1,94 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+
 using Cuck.Data;
 using Cuck.Models;
 using Cuck.Services;
+
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Cuck
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        public string ProdDb;
+        public string DevDb;
+        public string Stage;
+
+
+
+
+
+        public Startup( IConfiguration configuration ) => Configuration = configuration;
 
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices( IServiceCollection services )
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            ProdDb = Environment.GetEnvironmentVariable ( "ProdDb" );
+            DevDb = Configuration["DevDb"];
+            Stage = Environment.GetEnvironmentVariable ( "ASPNETCORE_ENVIRONMENT" );
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
 
-            // Add application services.
-            services.AddTransient<IEmailSender, EmailSender>();
-
-            services.AddMvc();
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        {
-            if (env.IsDevelopment())
+            if ( Stage == "Development" )
             {
-                app.UseBrowserLink();
-                app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
+
+                services.AddDbContext<ApplicationDbContext> ( options =>
+                  options.UseSqlServer ( DevDb ) );
+                services.AddDbContext<CuckContext> ( options =>
+                  options.UseSqlServer ( DevDb ) );
+
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                services.AddDbContext<ApplicationDbContext> ( options =>
+                  options.UseSqlServer ( ProdDb ) );
+                services.AddDbContext<ApplicationDbContext> ( options =>
+                  options.UseSqlServer ( ProdDb ) );
             }
 
-            app.UseStaticFiles();
+            services.AddIdentity<ApplicationUser,IdentityRole> ( )
+                .AddEntityFrameworkStores<ApplicationDbContext> ( )
+                .AddDefaultTokenProviders ( );
 
-            app.UseAuthentication();
+            // Add application services.
+            services.AddTransient<IEmailSender,EmailSender> ( );
 
-            app.UseMvc(routes =>
+            services.AddMvc ( );
+
+            services.AddDbContext<CuckContext> ( options =>
+                      options.UseSqlServer ( Configuration.GetConnectionString ( "CuckContext" ) ) );
+        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure( IApplicationBuilder app,IHostingEnvironment env )
+        {
+            if ( env.IsDevelopment ( ) )
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
+                app.UseBrowserLink ( );
+                app.UseDeveloperExceptionPage ( );
+                app.UseDatabaseErrorPage ( );
+            }
+            else
+            {
+                app.UseExceptionHandler ( "/Home/Error" );
+            }
+
+            app.UseStaticFiles ( );
+
+            app.UseAuthentication ( );
+
+            app.UseMvc ( routes =>
+              {
+                  routes.MapRoute (
+                      name: "default",
+                      template: "{controller=Home}/{action=Index}/{id?}" );
+              } );
         }
     }
 }

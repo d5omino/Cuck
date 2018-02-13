@@ -199,10 +199,7 @@ namespace Cuck.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Lockout()
-        {
-            return View();
-        }
+        public IActionResult Lockout( ) => View ( );
 
         [HttpGet]
         [AllowAnonymous]
@@ -348,10 +345,7 @@ namespace Cuck.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult ForgotPassword()
-        {
-            return View();
-        }
+        public IActionResult ForgotPassword( ) => View ( );
 
         [HttpPost]
         [AllowAnonymous]
@@ -382,10 +376,7 @@ namespace Cuck.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult ForgotPasswordConfirmation()
-        {
-            return View();
-        }
+        public IActionResult ForgotPasswordConfirmation( ) => View ( );
 
         [HttpGet]
         [AllowAnonymous]
@@ -425,17 +416,11 @@ namespace Cuck.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult ResetPasswordConfirmation()
-        {
-            return View();
-        }
+        public IActionResult ResetPasswordConfirmation( ) => View ( );
 
 
         [HttpGet]
-        public IActionResult AccessDenied()
-        {
-            return View();
-        }
+        public IActionResult AccessDenied( ) => View ( );
 
         #region Helpers
 

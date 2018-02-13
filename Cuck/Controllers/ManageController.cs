@@ -429,10 +429,7 @@ namespace Cuck.Controllers
         }
 
         [HttpGet]
-        public IActionResult ResetAuthenticatorWarning()
-        {
-            return View(nameof(ResetAuthenticator));
-        }
+        public IActionResult ResetAuthenticatorWarning( ) => View ( nameof ( ResetAuthenticator ) );
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -518,14 +515,11 @@ namespace Cuck.Controllers
             return result.ToString().ToLowerInvariant();
         }
 
-        private string GenerateQrCodeUri(string email, string unformattedKey)
-        {
-            return string.Format(
+        private string GenerateQrCodeUri( string email,string unformattedKey ) => string.Format (
                 AuthenticatorUriFormat,
-                _urlEncoder.Encode("Cuck"),
-                _urlEncoder.Encode(email),
-                unformattedKey);
-        }
+                _urlEncoder.Encode ( "Cuck" ),
+                _urlEncoder.Encode ( email ),
+                unformattedKey );
 
         private async Task LoadSharedKeyAndQrCodeUriAsync(ApplicationUser user, EnableAuthenticatorViewModel model)
         {
